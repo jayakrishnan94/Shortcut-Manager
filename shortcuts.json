@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Copy",
+    "description": "Copy selected text or item",
+    "keys": "Ctrl+C"
+  },
+  {
+    "title": "Paste",
+    "description": "Paste copied text or item",
+    "keys": "Ctrl+V"
+  },
+  {
+    "title": "Cut",
+    "description": "Cut selected text or item",
+    "keys": "Ctrl+X"
+  },
+  {
+    "title": "ssdfsdfsd",
+    "description": "sdfsdfsdfsdfsdfdsf",
+    "keys": "Ctrl+Shift+J"
+  }
+]

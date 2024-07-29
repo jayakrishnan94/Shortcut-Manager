@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Shortcut Manager</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Shortcut Manager</h1>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search shortcuts...">
+            </div>
+            <button id="addShortcutBtn">Add Shortcut</button>
+            <div id="shortcutList"></div>
+        </div>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitle">Add Shortcut</h2>
+                <input type="text" id="shortcutTitle" placeholder="Title">
+                <input type="text" id="shortcutDescription" placeholder="Description">
+                <input
+                    type="text"
+                    id="shortcutKeys"
+                    placeholder="Press shortcut keys"
+                    readonly
+                >
+                <button id="saveShortcutBtn">Save</button>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
