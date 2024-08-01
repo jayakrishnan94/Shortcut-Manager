@@ -63,11 +63,11 @@ async function saveShortcut() {
 		title: document.getElementById('shortcutTitle').value,
 		description: document.getElementById('shortcutDescription').value,
 		keys: document.getElementById('shortcutKeys').value,
-		// category: document.getElementById('shortcutCategory').value,
-		// favorite: false
+		category: document.getElementById('shortcutCategory').value,
+		favorite: false
 	};
 
-	if (Object.values(shortcut).some(value => !value)) {
+	if (Object.values(shortcut).some(value => (!value && value !== false))) {
 		alert('Please fill all fields');
 		return;
 	}
@@ -172,13 +172,21 @@ function clearModalInputs() {
 function detectShortcut(event) {
 	event.preventDefault();
 	const keys = [];
+
 	['ctrlKey', 'altKey', 'shiftKey', 'metaKey'].forEach(key => {
 		if (event[key]) keys.push(key.replace('Key', ''));
 	});
-	if (!['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) {
+
+	if (event.key === ' ') {
+		keys.push('Space');
+	} else if (!['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) {
+		if (event.target.value.includes('Space')) {
+			keys.push('Space');
+		}
 		keys.push(event.key);
 	}
-	document.getElementById('shortcutKeys').value = keys.join('+');
+
+	document.getElementById('shortcutKeys').value = keys.join(' + ');
 }
 
 function editShortcut(key) {
