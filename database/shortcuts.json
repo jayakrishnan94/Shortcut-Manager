@@ -1,0 +1,115 @@
+{
+  "shortcuts": [
+    {
+      "title": "Open file explorer",
+      "description": "Open the file explorer in LazyVim",
+      "keys": "<leader>e",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Find files",
+      "description": "Search for files in the project",
+      "keys": "<leader>ff",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Find text",
+      "description": "Search for text in the project",
+      "keys": "<leader>fg",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Open recent files",
+      "description": "Show and open recently opened files",
+      "keys": "<leader>fr",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Switch buffers",
+      "description": "List and switch between open buffers",
+      "keys": "<leader>,",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Open lazy dashboard",
+      "description": "Open the LazyVim dashboard",
+      "keys": "<leader>l",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Toggle terminal",
+      "description": "Open or close the terminal",
+      "keys": "<leader>ft",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Toggle zen mode",
+      "description": "Enable or disable zen mode for focused editing",
+      "keys": "<leader>uz",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Format document",
+      "description": "Format the current document",
+      "keys": "<leader>cf",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Rename symbol",
+      "description": "Rename the symbol under the cursor",
+      "keys": "<leader>cr",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Show code actions",
+      "description": "Display available code actions",
+      "keys": "<leader>ca",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Go to definition",
+      "description": "Jump to the definition of the symbol under the cursor",
+      "keys": "gd",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Show hover information",
+      "description": "Display hover information for the symbol under the cursor",
+      "keys": "K",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Next diagnostic",
+      "description": "Jump to the next diagnostic in the file",
+      "keys": "]d",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {
+      "title": "Previous diagnostic",
+      "description": "Jump to the previous diagnostic in the file",
+      "keys": "[d",
+      "category": "lazyvim",
+      "favorite": false
+    },
+    {}
+  ],
+  "categories": [
+    "vim",
+    "lazyvim",
+    null
+  ]
+}

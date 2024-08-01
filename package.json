@@ -1,15 +1,14 @@
 {
 	"name": "shortcut-manager",
 	"version": "1.0.0",
-	"description": "## Introduction",
-	"main": "script.js",
+	"description": "",
+	"main": "server.js",
+	"type": "module",
 	"scripts": {
-		"start": "node server.js"
+		"build": "node build.js"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
 	"dependencies": {
-		"express": "^4.19.2"
+		"esbuild": "^0.23.0",
+		"firebase": "^10.12.4"
 	}
 }

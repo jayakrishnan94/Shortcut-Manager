@@ -1,0 +1,56 @@
+#controls input {
+	width: 60%;
+}
+
+.shortcut-item {
+	background-color: white;
+	border: 1px solid #ddd;
+	padding: 15px;
+	border-radius: 5px;
+}
+
+.favorite-btn {
+	background-color: transparent;
+	border: none;
+	color: #ccc;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+.favorite-btn.active {
+	color: gold;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+	background-color: #333;
+	color: #f4f4f4;
+}
+
+body.dark-mode .shortcut-item {
+	background-color: #444;
+	border-color: #555;
+}
+
+body.dark-mode .modal-content {
+	background-color: #444;
+	color: #f4f4f4;
+}
+
+body.dark-mode .close {
+	color: #f4f4f4;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode select,
+body.dark-mode textarea {
+	background-color: #555;
+	color: #f4f4f4;
+	border-color: #666;
+}
+
+.actions-container {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}

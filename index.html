@@ -4,32 +4,46 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Shortcut Manager</title>
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="styles/index.css">
     </head>
     <body>
-        <div class="container">
+        <header>
             <h1>Shortcut Manager</h1>
-            <div class="search-bar">
+            <button id="darkModeToggle">Toggle Dark Mode</button>
+        </header>
+        <main>
+            <div id="controls">
                 <input type="text" id="searchInput" placeholder="Search shortcuts...">
-            </div>
-            <button id="addShortcutBtn">Add Shortcut</button>
-            <div id="shortcutList"></div>
-        </div>
-        <div id="modal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2 id="modalTitle">Add Shortcut</h2>
-                <input type="text" id="shortcutTitle" placeholder="Title">
-                <input type="text" id="shortcutDescription" placeholder="Description">
+                <select id="categoryFilter"></select>
+                <button id="addShortcutBtn">Add Shortcut</button>
+                <button id="exportBtn">Export Data</button>
                 <input
-                    type="text"
-                    id="shortcutKeys"
-                    placeholder="Press shortcut keys"
-                    readonly
+                    type="file"
+                    id="importInput"
+                    accept=".json"
+                    style="display: none;"
                 >
-                <button id="saveShortcutBtn">Save</button>
+                <button id="importBtn">Import Data</button>
             </div>
-        </div>
-        <script src="script.js"></script>
+            <div id="shortcutList"></div>
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="modalTitle">Add Shortcut</h2>
+                    <input type="text" id="shortcutTitle" placeholder="Title">
+                    <textarea id="shortcutDescription" placeholder="Description"></textarea>
+                    <input
+                        type="text"
+                        id="shortcutKeys"
+                        placeholder="Press shortcut keys"
+                        readonly
+                    >
+                    <select id="shortcutCategory"></select>
+                    <button id="saveShortcutBtn">Save Shortcut</button>
+                </div>
+            </div>
+        </main>
+        <script type="module" src="scripts/firebaseHook.js"></script>
+        <script type="module" src="scripts/script.js"></script>
     </body>
 </html>
