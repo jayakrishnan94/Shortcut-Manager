@@ -11,6 +11,7 @@ Shortcut Manager is a minimalistic web application designed to help you manage a
 - Edit existing shortcuts.
 - Search and filter shortcuts.
 - Saves shortcuts in a local JSON file.
+- 
 
 ## Tech Stack
 
