@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Shortcut Manager is a minimalistic web application designed to help you manage and organize your keyboard shortcuts. It allows you to add, edit, search, and list shortcuts. The application stores shortcuts in a local JSON file.
+Shortcut Manager is a minimalistic web application designed to help you manage and organize your keyboard shortcuts. It allows you to add, edit, search, and list shortcuts. The application stores shortcuts in a local JSON file..
 
 ## Features
 
