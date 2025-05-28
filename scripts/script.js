@@ -5,6 +5,7 @@ const { initializeFirebase, getData, setData, pushData, updateData, removeData }
 let shortcuts = [];
 let categories = [];
 let editingKey = null;
+let test = 123;
 
 document.addEventListener('DOMContentLoaded', async () => {
 	try {
