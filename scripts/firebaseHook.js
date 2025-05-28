@@ -5,6 +5,7 @@ import { getDatabase, ref, get, set, push, update, remove } from "https://www.gs
  * Custom hook for Firebase management.
  * @returns {Object} An object containing Firebase-related functions.
  */
+
 function useFirebase() {
 	let app;
 	let db;
