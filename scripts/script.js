@@ -6,6 +6,11 @@ let shortcuts = [];
 let categories = [];
 let editingKey = null;
 
+let shortcuts = [];
+let categories = [];
+let editingKey = null;
+
+
 document.addEventListener('DOMContentLoaded', async () => {
 	try {
 		initializeFirebase();
