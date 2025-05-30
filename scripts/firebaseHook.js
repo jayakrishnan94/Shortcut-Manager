@@ -25,7 +25,16 @@ function useFirebase() {
 				appId: "1:672812523336:web:48c7740efd05849d755d7d",
 				measurementId: "G-RF3P0NG4XH"
 			};
-
+const firebaseConfig = {
+				apiKey: "AIzaSyB8vVt9Y2m3-2vbtM_0C75GtyraZJQRVAo",
+				authDomain: "shortcut-manager-e9f6f.firebaseapp.com",
+				databaseURL: "https://shortcut-manager-e9f6f-default-rtdb.asia-southeast1.firebasedatabase.app",
+				projectId: "shortcut-manager-e9f6f",
+				storageBucket: "shortcut-manager-e9f6f.appspot.com",
+				messagingSenderId: "672812523336",
+				appId: "1:672812523336:web:48c7740efd05849d755d7d",
+				measurementId: "G-RF3P0NG4XH"
+			};
 			app = initializeApp(firebaseConfig);
 			db = getDatabase(app);
 		} catch (error) {
@@ -91,7 +100,6 @@ function useFirebase() {
 	 * @throws {Error} If data updating fails.
 	 */
 	async function updateData(path, data) {
-		console.log('updateData', { path, data })
 		try {
 			await update(ref(db, path), data);
 		} catch (error) {
