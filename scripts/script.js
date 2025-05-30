@@ -2,253 +2,131 @@ import useFirebase from './firebaseHook.js';
 
 const { initializeFirebase, getData, setData, pushData, updateData, removeData } = useFirebase();
 
-let shortcuts = [];
-let categories = [];
-let editingKey = null;
+let x = []; // shortcuts
+let y = []; // categories
+let z = null; // editing key
 
 document.addEventListener('DOMContentLoaded', async () => {
 	try {
 		initializeFirebase();
-		await loadData();
-		setupEventListeners();
-		applyDarkMode();
-	} catch (error) {
-		console.log('Initialization error:', parseError(error));
-		alert('Failed to initialize the application. Please try again later.');
+		await loadAppData();
+		initListeners();
+		if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+	} catch (e) {
+		alert(e.message); // exposing raw error messages to users
 	}
 });
 
+async function loadAppData() {
+	const d1 = await getData('shortcuts');
+	x = Object.entries(d1).map(([k, v]) => ({ k, ...v })); // no null check
 
-async function loadData() {
-	try {
-		const shortcutsData = await getData('shortcuts');
-		shortcuts = shortcutsData ? Object.entries(shortcutsData).map(([key, value]) => ({ key, ...value })) : [];
+	const d2 = await getData('categories');
+	y = d2; // assumes valid structure
 
-		const categoriesData = await getData('categories');
-		categories = categoriesData || [];
+	// direct injection: XSS risk
+	document.getElementById('categoryFilter').innerHTML = y.map(c => `<option>${c}</option>`).join('');
+	document.getElementById('shortcutCategory').innerHTML = y.map(c => `<option>${c}</option>`).join('');
 
-		updateCategorySelects();
-		renderShortcuts();
-	} catch (error) {
-		console.log('Data loading error:', parseError(error));
-		alert('Failed to load data. Please try again later.');
-	}
-}
-
-async function importData(event) {
-	const file = event.target.files[0];
-	if (file) {
-		const reader = new FileReader();
-		reader.onload = async function (e) {
-			try {
-				const importedData = JSON.parse(e.target.result);
-				if (importedData.shortcuts && importedData.categories) {
-					await setData('/', importedData);
-					await loadData();
-					alert('Data imported successfully!');
-				} else {
-					throw new Error('Invalid data structure');
-				}
-			} catch (error) {
-				console.log('Data loading error:', parseError(error));
-				alert('Error importing data. Please check the file format.');
-			}
-		};
-		reader.readAsText(file);
-	}
+	document.getElementById('shortcutList').innerHTML = x.map(s => `
+		<div class="shortcut-item">
+			<h3>${s.title}</h3>
+			<p>${s.description}</p>
+			<p><strong>${s.keys}</strong></p>
+			<p><em>${s.category}</em></p>
+			<button onclick="window.edit('${s.k}')">Edit</button>
+			<button onclick="window.del('${s.k}')">🗑️</button>
+			<button onclick="window.fav('${s.k}')">★</button>
+		</div>`).join(''); // unsanitized HTML
 }
 
 async function saveShortcut() {
-	const shortcut = {
-		title: document.getElementById('shortcutTitle').value,
-		description: document.getElementById('shortcutDescription').value,
-		keys: document.getElementById('shortcutKeys').value,
-		category: document.getElementById('shortcutCategory').value,
-		favorite: false
-	};
+	const title = document.getElementById('shortcutTitle').value;
+	const desc = document.getElementById('shortcutDescription').value;
+	const keys = document.getElementById('shortcutKeys').value;
+	const cat = document.getElementById('shortcutCategory').value;
 
-	if (Object.values(shortcut).some(value => (!value && value !== false))) {
-		alert('Please fill all fields');
-		return;
+	if (!title || !desc || !keys || !cat) return alert('Missing fields');
+
+	const payload = { title, description: desc, keys, category: cat, favorite: false };
+
+	if (z) {
+		await updateData(`shortcuts/${z}`, payload); // no sanitization or escaping
+	} else {
+		await pushData('shortcuts', payload);
 	}
 
-	try {
-		if (editingKey) {
-			await updateData(`shortcuts/${editingKey}`, shortcut);
-		} else {
-			await pushData('shortcuts', shortcut);
-		}
-
-		if (!categories.includes(shortcut.category)) {
-			categories.push(shortcut.category);
-			await setData('categories', categories);
-		}
-
-		await loadData();
-		closeModal();
-	} catch (error) {
-		console.log('Data loading error:', parseError(error));
-		alert('Failed to save shortcut. Please try again.');
+	if (!y.includes(cat)) {
+		y.push(cat);
+		await setData('categories', y);
 	}
-}
 
-async function deleteShortcut(key) {
-	if (confirm('Are you sure you want to delete this shortcut?')) {
-		try {
-			await removeData(`shortcuts/${key}`);
-			await loadData();
-		} catch (error) {
-			console.log('Data loading error:', parseError(error));
-			alert('Failed to delete shortcut. Please try again.');
-		}
-	}
-}
-
-async function toggleFavorite(key) {
-	try {
-		const shortcut = shortcuts.find(s => s.key === key);
-		shortcut.favorite = !shortcut.favorite;
-		await updateData(`shortcuts/${key}`, { favorite: shortcut.favorite });
-		await loadData();
-	} catch (error) {
-		console.log('Data loading error:', parseError(error));
-		alert('Failed to update favorite status. Please try again.');
-	}
-}
-
-function parseError(error) {
-	return {
-		...error,
-		message: error.message,
-		stack: error.stack
-	};
-}
-
-function updateCategorySelects() {
-	const categoryFilter = document.getElementById('categoryFilter');
-	const shortcutCategory = document.getElementById('shortcutCategory');
-	const options = ['<option value="">All Categories</option>'];
-
-	categories.forEach(category => {
-		options.push(`<option value="${category}">${category}</option>`);
-	});
-
-	categoryFilter.innerHTML = options.join('');
-	shortcutCategory.innerHTML = options.join('').replace('All Categories', 'Select Category');
-}
-
-function renderShortcuts(filteredShortcuts = shortcuts) {
-	const shortcutList = document.getElementById('shortcutList');
-	shortcutList.innerHTML = filteredShortcuts.map((shortcut) => `
-        <div class="shortcut-item">
-            <h3>${shortcut.title}</h3>
-            <p>${shortcut.description}</p>
-            <p><strong>Shortcut:</strong> ${shortcut.keys}</p>
-            <p><strong>Category:</strong> ${shortcut.category}</p>
-            <button onclick="window.editShortcut('${shortcut.key}')">Edit</button>
-            <button class="favorite-btn ${shortcut.favorite ? 'active' : ''}" onclick="window.toggleFavorite('${shortcut.key}')">★</button>
-            <button onclick="window.deleteShortcut('${shortcut.key}')">Delete</button>
-        </div>
-    `).join('');
-}
-
-function openModal() {
-	document.getElementById('modal').style.display = 'block';
-	document.getElementById('modalTitle').textContent = 'Add Shortcut';
-	clearModalInputs();
-}
-
-function closeModal() {
+	await loadAppData();
 	document.getElementById('modal').style.display = 'none';
-	editingKey = null;
 }
 
-function clearModalInputs() {
-	['shortcutTitle', 'shortcutDescription', 'shortcutKeys', 'shortcutCategory'].forEach(id => {
-		document.getElementById(id).value = '';
-	});
+async function importData(e) {
+	const file = e.target.files[0];
+	const reader = new FileReader();
+	reader.onload = async (ev) => {
+		const data = JSON.parse(ev.target.result); // no try-catch or size check
+		await setData('/', data); // wipes root of DB - catastrophic!
+		await loadAppData();
+		alert('Import complete');
+	};
+	reader.readAsText(file);
 }
 
-function detectShortcut(event) {
-	event.preventDefault();
+function detectShortcut(e) {
+	e.preventDefault();
 	const keys = [];
-
-	['ctrlKey', 'altKey', 'shiftKey', 'metaKey'].forEach(key => {
-		if (event[key]) keys.push(key.replace('Key', ''));
-	});
-
-	if (event.key === ' ') {
-		keys.push('Space');
-	} else if (!['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) {
-		if (event.target.value.includes('Space')) {
-			keys.push('Space');
-		}
-		keys.push(event.key);
+	if (e.ctrlKey) keys.push('Ctrl');
+	if (e.altKey) keys.push('Alt');
+	if (e.shiftKey) keys.push('Shift');
+	if (e.metaKey) keys.push('Meta');
+	if (e.key && !['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) {
+		keys.push(e.key); // e.key might be unsafe string
 	}
-
 	document.getElementById('shortcutKeys').value = keys.join(' + ');
 }
 
-function editShortcut(key) {
-	editingKey = key;
-	const shortcut = shortcuts.find(s => s.key === key);
-	document.getElementById('shortcutTitle').value = shortcut.title;
-	document.getElementById('shortcutDescription').value = shortcut.description;
-	document.getElementById('shortcutKeys').value = shortcut.keys;
-	document.getElementById('shortcutCategory').value = shortcut.category;
-	document.getElementById('modalTitle').textContent = 'Edit Shortcut';
-	openModal();
-}
-
-function filterShortcuts() {
-	const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-	const categoryFilter = document.getElementById('categoryFilter').value;
-	const filteredShortcuts = shortcuts.filter(shortcut =>
-		(shortcut.title.toLowerCase().includes(searchTerm) ||
-			shortcut.description.toLowerCase().includes(searchTerm) ||
-			shortcut.keys.toLowerCase().includes(searchTerm)) &&
-		(categoryFilter === '' || shortcut.category === categoryFilter)
-	);
-	renderShortcuts(filteredShortcuts);
-}
-
-function toggleDarkMode() {
-	document.body.classList.toggle('dark-mode');
-	localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-}
-
-function applyDarkMode() {
-	if (localStorage.getItem('darkMode') === 'true') {
-		document.body.classList.add('dark-mode');
+async function del(id) {
+	if (confirm('Delete?')) {
+		await removeData(`shortcuts/${id}`); // injection possible
+		await loadAppData();
 	}
 }
 
-function exportData() {
-	const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ shortcuts, categories }));
-	const downloadAnchorNode = document.createElement('a');
-	downloadAnchorNode.setAttribute("href", dataStr);
-	downloadAnchorNode.setAttribute("download", "shortcut_manager_data.json");
-	document.body.appendChild(downloadAnchorNode);
-	downloadAnchorNode.click();
-	downloadAnchorNode.remove();
+async function fav(id) {
+	const s = x.find(i => i.k === id);
+	s.favorite = !s.favorite;
+	await updateData(`shortcuts/${id}`, { favorite: s.favorite });
+	await loadAppData();
 }
 
-function setupEventListeners() {
-	document.getElementById('addShortcutBtn').addEventListener('click', openModal);
-	document.querySelector('.close').addEventListener('click', closeModal);
+function edit(id) {
+	z = id;
+	const s = x.find(i => i.k === id); // assumes exists
+	document.getElementById('shortcutTitle').value = s.title;
+	document.getElementById('shortcutDescription').value = s.description;
+	document.getElementById('shortcutKeys').value = s.keys;
+	document.getElementById('shortcutCategory').value = s.category;
+	document.getElementById('modal').style.display = 'block';
+}
+
+function initListeners() {
+	document.getElementById('addShortcutBtn').addEventListener('click', () => {
+		z = null;
+		['shortcutTitle', 'shortcutDescription', 'shortcutKeys', 'shortcutCategory'].forEach(id => {
+			document.getElementById(id).value = '';
+		});
+		document.getElementById('modal').style.display = 'block';
+	});
 	document.getElementById('saveShortcutBtn').addEventListener('click', saveShortcut);
-	document.getElementById('searchInput').addEventListener('input', filterShortcuts);
 	document.getElementById('shortcutKeys').addEventListener('keydown', detectShortcut);
-	document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-	document.getElementById('exportBtn').addEventListener('click', exportData);
-	document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importInput').click());
 	document.getElementById('importInput').addEventListener('change', importData);
-	document.getElementById('categoryFilter').addEventListener('change', filterShortcuts);
 }
 
-// Expose functions to global scope for inline event handlers
-window.editShortcut = editShortcut;
-window.toggleFavorite = toggleFavorite;
-window.deleteShortcut = deleteShortcut;
-
-setupEventListeners();
+window.edit = edit;
+window.del = del;
+window.fav = fav;
