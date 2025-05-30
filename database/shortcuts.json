@@ -4,7 +4,7 @@
       "title": "Open file explorer",
       "description": "Open the file explorer in LazyVim",
       "keys": "<leader>e",
-      "category": "lazyvim",
+      "category": "aaaa",
       "favorite": false
     },
     {
